@@ -1,16 +1,24 @@
 import fs from "fs";
 import { PDFDocument } from "pdf-lib";
 
-const pagesArray = [
-  7, 8, 12, 16, 17, 21, 22, 23, 27, 28, 32, 36, 37, 41, 42, 43, 44, 45, 57, 58,
-  59, 60, 61, 68, 69, 70, 82, 83, 84, 85, 86, 87, 90, 94, 95, 96, 120, 124,
-];
+const pagesArray = [];
 
 const removePDFPages = async (inputString, outputString, pagesToRemove) => {
   const pdf = fs.readFileSync(inputString);
   const pdfDoc = await PDFDocument.load(pdf);
 
+  // Error handling
+  const pageDoenstExist = pagesArray.some(
+    (pageNumber) => pageNumber > pdfDoc.getPageCount()
+  );
+  const includesZero = pagesArray.includes(0);
+
+  if (pageDoenstExist || includesZero)
+    throw new Error("A page number you want to delete doens't exist.");
+
+  // Now remove all the pages number present in the array
   pagesToRemove.forEach((pageN, idx) => {
+    // Since the index start from zero, we need to subtract the current index to take track how many pages has been deleted previously
     if (idx === 0) pageN = pageN - 1;
     else pageN = pageN - 1 - idx;
 
@@ -18,7 +26,6 @@ const removePDFPages = async (inputString, outputString, pagesToRemove) => {
   });
 
   const pdfBytes = await pdfDoc.save();
-
   fs.writeFileSync(outputString, pdfBytes);
 };
 

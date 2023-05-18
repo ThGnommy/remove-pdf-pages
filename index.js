@@ -18,7 +18,7 @@ const removePDFPages = async (inputString, outputString, pagesToRemove) => {
 
   // Now remove all the pages number present in the array
   pagesToRemove.forEach((pageN, idx) => {
-    // Since the index start from zero, we need to subtract the current index to take track how many pages has been deleted previously
+    // Since the method `removePage()` delete one page each time, we need to subtract the current index to take track how many pages has been deleted previously
     if (idx === 0) pageN = pageN - 1;
     else pageN = pageN - 1 - idx;
 
